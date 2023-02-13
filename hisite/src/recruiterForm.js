@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import {location} from "./location.js"
 
 function Drop() {
-    const [prof, setProf] = useState()
-    const [tc, setTc] = useState(false)
+
+
+    // const [tc, setTc] = useState(false)
 
     const [recruiterData, setRecruiterData] = useState({
         fname: "",
@@ -16,30 +18,42 @@ function Drop() {
         jobPost: "",
         status: "active"
     });
-
-        
-
+      
+   
     let name , value ;
 
     function HandleEvent(e) {
        
         name= e.target.name 
         value = e.target.value
-        setRecruiterData({...recruiterData, [name]: value})
-
-       
+        setRecruiterData({...recruiterData, [name]: value})     
+    }
+    function submitEvent(e) {
+        if(!recruiterData.fname ||!recruiterData.lname ||!recruiterData.title ||!recruiterData.email ||!recruiterData.phone ||!recruiterData.companyName) alert("Please fill all the fields'")
+        else{
+         console.log( recruiterData)
+         e.preventDefault()
+        }
     }
 
-
-    function submitEvent(e) {
-         console.log(prof, tc , recruiterData)
-         e.preventDefault()
-
+    function SaveRecruiter() {
+        let info = {...recruiterData}
+    
+    
+        fetch("http://localhost:8000/recruiter", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(info)
+    
+        }).then(response => response.json().then(data => console.log(data)))
+    
     }
     return (
         <div className="App">
             <form onSubmit={submitEvent}>
-
 
                 <input type="text" placeholder="enter  fname" value={recruiterData.fname} name="fname" onChange={HandleEvent}></input><br></br><br></br>
                 <input type="text" placeholder="enter  lname" value={recruiterData.lname} name="lname" onChange={HandleEvent}></input><br></br><br></br>
@@ -48,20 +62,23 @@ function Drop() {
                 <input type="text" placeholder="enter  Email" value={recruiterData.email} name="email" onChange={HandleEvent}></input><br></br><br></br>
                 <input type="text" placeholder="enter  companyName" value={recruiterData.companyName} name="companyName" onChange={HandleEvent}></input><br></br><br></br>
                 <input type="text" placeholder="enter  companyType" value={recruiterData.companyType} name="companyType" onChange={HandleEvent}></input><br></br><br></br>
-                <input type="text" placeholder="enter  companyLocation" value={recruiterData.companyLocation} name="companyLocation" onChange={HandleEvent}></input><br></br><br></br>
+                {/* <input type="text" placeholder="enter  companyLocation" value={recruiterData.companyLocation} name="companyLocation" onChange={HandleEvent}></input><br></br><br></br> */}
                 <input type="text" placeholder="enter  jobPost" value={recruiterData.jobPost} name="jobPost" onChange={HandleEvent}></input><br></br><br></br>
                 <input type="text" placeholder="enter  status" value={recruiterData.status} name="status" onChange={HandleEvent}></input><br></br><br></br>
 
-                <select value={prof} name = "prof" onChange={HandleEvent}>
-                    <option>select profession</option>
-                    <option>Youtuber</option>
-                    <option>Coder</option>
-                    <option>singer</option>
-                </select><br></br><br></br>
-                <input type="checkbox" onChange={HandleEvent} />
+                <select value={recruiterData.companyLocation} name = "companyLocation" onChange={HandleEvent}>
+                   { 
+                    location.map((item,index) => 
+                        <option key={index}>{item}</option>
+                    
+                    )
+                    }
 
-                <span>Agree T/C</span><br></br><br></br>
-                <button type="submit">submit</button>
+                </select><br></br><br></br>
+                {/* <input type="checkbox" onChange={HandleEvent} />
+
+                <span>Agree T/C</span><br></br><br></br> */}
+                <button type="submit" onClick={SaveRecruiter}>submit</button>
                 <br></br>
                 <br></br>
 
